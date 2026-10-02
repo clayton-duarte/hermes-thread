@@ -4,6 +4,7 @@ Invariant enforced here (and unit-tested): at most one ask per session has
 state='current'. seen_turns makes the capture hook idempotent — replaying the
 same turn_id must never create a duplicate ask.
 """
+
 from __future__ import annotations
 
 import os
@@ -51,8 +52,13 @@ def connect(db_path: Optional[str] = None) -> sqlite3.Connection:
 
 
 def record_ask(
-    con: sqlite3.Connection, *, session_id: str, title: str, turn_id: str,
-    kind: Optional[str] = None, parent_id: Optional[str] = None,
+    con: sqlite3.Connection,
+    *,
+    session_id: str,
+    title: str,
+    turn_id: str,
+    kind: Optional[str] = None,
+    parent_id: Optional[str] = None,
 ) -> Optional[str]:
     """Insert an ask for (session_id, turn_id) unless already seen (idempotent).
 
@@ -69,6 +75,8 @@ def record_ask(
 
     now = time.time()
     ask_id = str(uuid.uuid4())
+    if parent_id is not None and parent_id == ask_id:
+        raise ValueError("parent_id must not reference its own ask id")
     con.execute(
         "UPDATE asks SET state = 'open', updated_at = ? "
         "WHERE session_id = ? AND state = 'current'",
