@@ -13,11 +13,12 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "dashboard"))
 
-import db as db_module  # noqa: E402
 import plugin_api  # noqa: E402
 import pytest  # noqa: E402
 from fastapi import FastAPI  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402
+
+import db as db_module  # noqa: E402
 
 
 @pytest.fixture()

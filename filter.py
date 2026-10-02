@@ -47,7 +47,9 @@ def unwrap_multimodal(text: str) -> str:
     except Exception:
         return text
     return "\n".join(
-        p.get("text", "") for p in parts if isinstance(p, dict) and p.get("type") == "text"
+        p.get("text", "")
+        for p in parts
+        if isinstance(p, dict) and p.get("type") == "text"
     ).strip()
 
 
