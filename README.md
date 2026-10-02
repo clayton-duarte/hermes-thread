@@ -23,3 +23,7 @@ and renders them above the composer with live strike-through as they resolve.
 | CURRENT | exactly one; default target for new messages |
 | OPEN | scanned only on a subject-change cue |
 | COMPLETED | ignored unless the user explicitly reopens |
+
+## License
+
+MIT — see [LICENSE](LICENSE).
