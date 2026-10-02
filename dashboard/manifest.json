@@ -1,0 +1,9 @@
+{
+  "name": "thread",
+  "label": "Thread",
+  "description": "Session-scoped ask tracking above the composer.",
+  "icon": "ListTree",
+  "version": "0.1.0",
+  "slots": [],
+  "api": "plugin_api.py"
+}
