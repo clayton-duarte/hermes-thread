@@ -11,9 +11,14 @@ class StubCtx:
 
     def __init__(self):
         self.calls = []
+        self.hooks = []
+        self.llm = object()
 
     def register_auxiliary_task(self, key, **kwargs):
         self.calls.append((key, kwargs))
+
+    def register_hook(self, hook_name, callback):
+        self.hooks.append((hook_name, callback))
 
 
 def test_register_calls_register_auxiliary_task_with_namespaced_key():
