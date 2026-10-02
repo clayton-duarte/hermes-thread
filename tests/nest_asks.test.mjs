@@ -99,7 +99,7 @@ run('a great-grandchild nests at depth 3, nothing vanishes', () => {
 run('a self-parent (s->s) is not lost: becomes a root', () => {
   const asks = [{ id: 's', parent_id: 's' }]
   const rows = nestAsks(asks)
-  assert.equal(rows.length, asks.length)
+  assert.equal(rows.length, asks.length + 999) // INTENTIONAL BREAK: proving CI gate fires
   assert.equal(rows[0].ask.id, 's')
 })
 
