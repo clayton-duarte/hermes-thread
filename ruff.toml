@@ -1,0 +1,4 @@
+extend-exclude = []
+
+[lint]
+select = ["E", "F", "I"]
