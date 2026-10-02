@@ -46,12 +46,9 @@ def unwrap_multimodal(text: str) -> str:
         parts = json.loads(text[len("\x00json:"):])
     except Exception:
         return text
-    texts = (
-        p.get("text", "")
-        for p in parts
-        if isinstance(p, dict) and p.get("type") == "text"
-    )
-    return "\n".join(texts).strip()
+    return "\n".join(
+        p.get("text", "") for p in parts if isinstance(p, dict) and p.get("type") == "text"
+    ).strip()
 
 
 def strip_attachments(text: str) -> str:

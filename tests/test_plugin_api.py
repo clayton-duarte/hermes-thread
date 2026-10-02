@@ -13,12 +13,11 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "dashboard"))
 
-import pytest
-from fastapi import FastAPI
-from fastapi.testclient import TestClient
-
-import db as db_module
-import plugin_api
+import db as db_module  # noqa: E402
+import plugin_api  # noqa: E402
+import pytest  # noqa: E402
+from fastapi import FastAPI  # noqa: E402
+from fastapi.testclient import TestClient  # noqa: E402
 
 
 @pytest.fixture()
@@ -82,7 +81,8 @@ def test_only_returns_the_requested_session(client):
     con.execute(
         "INSERT INTO asks (id, session_id, parent_id, title, kind, state, "
         "reopened_count, created_turn, resolved_turn, created_at, updated_at) "
-        "VALUES ('other-1', 's2', NULL, 'other session ask', NULL, 'current', 0, 't1', NULL, 0, 0)"
+        "VALUES ('other-1', 's2', NULL, 'other session ask', NULL, 'current', "
+        "0, 't1', NULL, 0, 0)"
     )
     con.commit()
     con.close()

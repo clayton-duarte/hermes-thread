@@ -67,7 +67,9 @@ def test_record_ask_rejects_parent_id_equal_to_its_own_generated_id():
     forced_id = "11111111-1111-1111-1111-111111111111"
     with monkeypatch_uuid(forced_id):
         with pytest.raises(ValueError):
-            record_ask(con, session_id="s1", title="self", turn_id="t1", parent_id=forced_id)
+            record_ask(
+                con, session_id="s1", title="self", turn_id="t1", parent_id=forced_id
+            )
 
 
 class monkeypatch_uuid:
