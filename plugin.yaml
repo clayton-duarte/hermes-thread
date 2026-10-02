@@ -1,0 +1,7 @@
+name: thread
+kind: standalone
+version: 0.1.0
+description: "Session-scoped ask tracking. Captures asks per session, groups follow-ups under a parent, renders above the composer."
+author: Clayton Duarte
+provides_hooks:
+  - post_llm_call
