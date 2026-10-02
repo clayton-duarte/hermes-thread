@@ -5,3 +5,4 @@ __pycache__/
 .venv/
 node_modules/
 .worktrees/
+hermes_thread.egg-info/

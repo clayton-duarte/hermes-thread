@@ -71,6 +71,73 @@ run('an orphaned parent_id (parent not in the set) renders at depth 0, not dropp
   assert.equal(rows[0].depth, 0)
 })
 
+run('a grandchild nests at depth 2, after its parent and grandparent', () => {
+  const asks = [
+    { id: 'a', parent_id: null },
+    { id: 'b', parent_id: 'a' },
+    { id: 'c', parent_id: 'b' }
+  ]
+  const rows = nestAsks(asks)
+  assert.equal(rows.length, asks.length)
+  assert.deepEqual(rows.map(r => r.ask.id), ['a', 'b', 'c'])
+  assert.deepEqual(rows.map(r => r.depth), [0, 1, 2])
+})
+
+run('a great-grandchild nests at depth 3, nothing vanishes', () => {
+  const asks = [
+    { id: 'a', parent_id: null },
+    { id: 'b', parent_id: 'a' },
+    { id: 'c', parent_id: 'b' },
+    { id: 'd', parent_id: 'c' }
+  ]
+  const rows = nestAsks(asks)
+  assert.equal(rows.length, asks.length)
+  assert.deepEqual(rows.map(r => r.ask.id), ['a', 'b', 'c', 'd'])
+  assert.deepEqual(rows.map(r => r.depth), [0, 1, 2, 3])
+})
+
+run('a self-parent (s->s) is not lost: becomes a root', () => {
+  const asks = [{ id: 's', parent_id: 's' }]
+  const rows = nestAsks(asks)
+  assert.equal(rows.length, asks.length)
+  assert.equal(rows[0].ask.id, 's')
+})
+
+run('a two-node cycle (p->q->p) loses nothing', () => {
+  const asks = [
+    { id: 'p', parent_id: 'q' },
+    { id: 'q', parent_id: 'p' }
+  ]
+  const rows = nestAsks(asks)
+  assert.equal(rows.length, asks.length)
+  assert.deepEqual(new Set(rows.map(r => r.ask.id)), new Set(['p', 'q']))
+})
+
+run('a three-node cycle (x->y->z->x) loses nothing', () => {
+  const asks = [
+    { id: 'x', parent_id: 'z' },
+    { id: 'y', parent_id: 'x' },
+    { id: 'z', parent_id: 'y' }
+  ]
+  const rows = nestAsks(asks)
+  assert.equal(rows.length, asks.length)
+  assert.deepEqual(new Set(rows.map(r => r.ask.id)), new Set(['x', 'y', 'z']))
+})
+
+run('rows.length === asks.length is an invariant across mixed fixtures', () => {
+  const fixtures = [
+    [],
+    [{ id: 'a', parent_id: null }, { id: 'b', parent_id: null }],
+    [{ id: 'child-1', parent_id: 'missing-parent' }],
+    [{ id: 'a', parent_id: null }, { id: 'b', parent_id: 'a' }, { id: 'c', parent_id: 'b' }],
+    [{ id: 's', parent_id: 's' }],
+    [{ id: 'p', parent_id: 'q' }, { id: 'q', parent_id: 'p' }]
+  ]
+  for (const asks of fixtures) {
+    assert.equal(nestAsks(asks).length, asks.length)
+  }
+})
+
 if (process.exitCode) {
   process.exit(process.exitCode)
 }

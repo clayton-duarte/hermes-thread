@@ -69,6 +69,8 @@ def record_ask(
 
     now = time.time()
     ask_id = str(uuid.uuid4())
+    if parent_id is not None and parent_id == ask_id:
+        raise ValueError("parent_id must not reference its own ask id")
     con.execute(
         "UPDATE asks SET state = 'open', updated_at = ? "
         "WHERE session_id = ? AND state = 'current'",

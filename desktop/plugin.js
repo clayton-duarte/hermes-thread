@@ -47,16 +47,34 @@ function AskRow({ ask, depth }) {
 }
 
 /** Groups flat rows by `parent_id` and renders parents followed by their
- *  children, each child indented one level. Rows with no match among the
- *  seeded asks (an orphaned parent_id) are rendered at depth 0, same as a
- *  row with no parent — never dropped. */
+ *  children, recursing to real depth (visual indent clamped, not the row
+ *  itself). Rows with no match among the seeded asks (an orphaned
+ *  parent_id), and any node whose ancestry loops back on itself (including
+ *  a self-parent), are promoted to a root instead of being discarded —
+ *  every ask renders exactly once, no exceptions. */
 function nestAsks(asks) {
   const byId = new Map(asks.map(a => [a.id, a]))
-  const roots = asks.filter(a => !a.parent_id || !byId.has(a.parent_id))
-  const childrenOf = new Map()
 
+  // A node is cyclic if walking parent_id from it ever revisits a node
+  // already seen in THIS walk. That makes it a root regardless of whether
+  // its parent_id otherwise resolves to a real ask.
+  function isCyclic(id) {
+    const seen = new Set()
+    let cur = id
+    while (true) {
+      if (seen.has(cur)) return true
+      seen.add(cur)
+      const ask = byId.get(cur)
+      if (!ask || !ask.parent_id || !byId.has(ask.parent_id)) return false
+      cur = ask.parent_id
+    }
+  }
+
+  const roots = asks.filter(a => !a.parent_id || !byId.has(a.parent_id) || isCyclic(a.id))
+
+  const childrenOf = new Map()
   for (const ask of asks) {
-    if (ask.parent_id && byId.has(ask.parent_id)) {
+    if (ask.parent_id && byId.has(ask.parent_id) && !isCyclic(ask.id)) {
       const siblings = childrenOf.get(ask.parent_id) ?? []
       siblings.push(ask)
       childrenOf.set(ask.parent_id, siblings)
@@ -64,11 +82,17 @@ function nestAsks(asks) {
   }
 
   const rows = []
-  for (const root of roots) {
-    rows.push({ ask: root, depth: 0 })
-    for (const child of childrenOf.get(root.id) ?? []) {
-      rows.push({ ask: child, depth: 1 })
+  const visited = new Set()
+  function walk(ask, depth) {
+    if (visited.has(ask.id)) return // defence in depth against malformed data
+    visited.add(ask.id)
+    rows.push({ ask, depth: Math.min(depth, 3) })
+    for (const child of childrenOf.get(ask.id) ?? []) {
+      walk(child, depth + 1)
     }
+  }
+  for (const root of roots) {
+    walk(root, 0)
   }
   return rows
 }
