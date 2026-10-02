@@ -2,6 +2,7 @@
 
 register(ctx) is called once by the plugin loader (hermes_cli/plugins.py).
 """
+
 from __future__ import annotations
 
 

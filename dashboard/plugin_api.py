@@ -7,6 +7,7 @@ first so a child always renders after its parent has been seen.
 Mounted at /api/plugins/thread/ by the dashboard plugin system (see
 dashboard/manifest.json).
 """
+
 from __future__ import annotations
 
 import sys

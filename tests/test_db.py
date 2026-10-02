@@ -5,6 +5,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import pytest  # noqa: E402
+
 from db import SCHEMA, current_ask_count, record_ask  # noqa: E402
 
 

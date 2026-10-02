@@ -4,6 +4,7 @@ Hermetic: a temp sqlite file via db.connect(db_path=...), monkeypatched
 into the route by overriding db.default_db_path — no real ~/.hermes writes,
 no network, no subprocess.
 """
+
 from __future__ import annotations
 
 import sys
