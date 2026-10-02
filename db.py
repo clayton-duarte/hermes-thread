@@ -70,12 +70,13 @@ def record_ask(
     now = time.time()
     ask_id = str(uuid.uuid4())
     con.execute(
-        "UPDATE asks SET state = 'open', updated_at = ? WHERE session_id = ? AND state = 'current'",
+        "UPDATE asks SET state = 'open', updated_at = ? "
+        "WHERE session_id = ? AND state = 'current'",
         (now, session_id),
     )
     con.execute(
-        "INSERT INTO asks (id, session_id, parent_id, title, kind, state, reopened_count, "
-        "created_turn, resolved_turn, created_at, updated_at) "
+        "INSERT INTO asks (id, session_id, parent_id, title, kind, state, "
+        "reopened_count, created_turn, resolved_turn, created_at, updated_at) "
         "VALUES (?, ?, ?, ?, ?, 'current', 0, ?, NULL, ?, ?)",
         (ask_id, session_id, parent_id, title, kind, turn_id, now, now),
     )

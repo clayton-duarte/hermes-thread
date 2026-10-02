@@ -4,7 +4,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from db import SCHEMA, record_ask, current_ask_count  # noqa: E402
+from db import SCHEMA, current_ask_count, record_ask  # noqa: E402
 
 
 def fresh_con() -> sqlite3.Connection:
@@ -36,7 +36,9 @@ def test_replaying_same_turn_id_creates_one_ask():
     second = record_ask(con, session_id="s1", title="add retries (dup)", turn_id="t1")
     assert first is not None
     assert second is None  # idempotent no-op on replay
-    count = con.execute("SELECT COUNT(*) FROM asks WHERE session_id = ?", ("s1",)).fetchone()[0]
+    count = con.execute(
+        "SELECT COUNT(*) FROM asks WHERE session_id = ?", ("s1",)
+    ).fetchone()[0]
     assert count == 1
 
 

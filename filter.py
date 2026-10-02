@@ -4,12 +4,15 @@ Stage 2 (aux-model classify, not here) runs only on survivors. Ported from the
 spike at ~/.hermes/cache/scratch/askspike/extract.py — do not rewrite; keep
 pure (str in, bool/str out) so it unit-tests with no DB and no model.
 """
-import re
 import json
+import re
 
 NOISE_PREFIXES = (
-    "[CONTEXT COMPACTION", "[OUT-OF-BAND USER MESSAGE", "[IMPORTANT: Background process",
-    "[IMPORTANT: The user has invoked", "[ASYNC DELEGATION BATCH",
+    "[CONTEXT COMPACTION",
+    "[OUT-OF-BAND USER MESSAGE",
+    "[IMPORTANT: Background process",
+    "[IMPORTANT: The user has invoked",
+    "[ASYNC DELEGATION BATCH",
 )
 # kanban/gateway notification echoes arrive as user-role messages
 NOTIFY_RE = re.compile(r"^[✔✖⏸⏱⚠]\s*\[")
@@ -43,7 +46,12 @@ def unwrap_multimodal(text: str) -> str:
         parts = json.loads(text[len("\x00json:"):])
     except Exception:
         return text
-    return "\n".join(p.get("text", "") for p in parts if isinstance(p, dict) and p.get("type") == "text").strip()
+    texts = (
+        p.get("text", "")
+        for p in parts
+        if isinstance(p, dict) and p.get("type") == "text"
+    )
+    return "\n".join(texts).strip()
 
 
 def strip_attachments(text: str) -> str:

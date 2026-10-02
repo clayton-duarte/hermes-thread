@@ -3,7 +3,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from filter import is_noise, unwrap_multimodal, strip_attachments  # noqa: E402
+from filter import is_noise, strip_attachments, unwrap_multimodal  # noqa: E402
 
 
 def test_drops_system_banner():
